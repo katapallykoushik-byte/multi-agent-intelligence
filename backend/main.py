@@ -200,6 +200,7 @@ def run_analysis_pipeline(file_path: str, business_problem: str):
 # MULTI-AGENT DATASET ANALYSIS ENDPOINT
 # ==========================================================
 
+@app.post("/")
 @app.post("/analyze")
 @app.post("/api/analyze")
 async def analyze_dataset(
@@ -249,14 +250,3 @@ async def analyze_dataset(
                 os.remove(file_path)
             except Exception:
                 pass
-
-
-if __name__ == "__main__":
-    import argparse
-    import json
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file", required=True)
-    parser.add_argument("--problem", required=True)
-    args = parser.parse_args()
-    result = run_analysis_pipeline(args.file, args.problem)
-    print(json.dumps(result))
