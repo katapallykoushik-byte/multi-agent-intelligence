@@ -1,7 +1,10 @@
-streamlit
+fastapi
+uvicorn[standard]
+python-multipart
 pandas
 numpy
-openpyxl
-plotly
 scikit-learn
 scipy
+openpyxl
+python-dateutil
+joblib
