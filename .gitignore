@@ -33,3 +33,5 @@ uploads/
 
 # Python tooling
 .pyright/
+.vercel
+.env*
