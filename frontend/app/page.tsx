@@ -111,7 +111,7 @@ export default function Home() {
       formData.append("file", selectedFile);
       formData.append("business_problem", businessProblem);
 
-      const response = await fetch("http://localhost:8000/analyze", {
+      const response = await fetch("https://multi-agent-intelligence.onrender.com/analyze", {
         method: "POST",
         body: formData,
       });
