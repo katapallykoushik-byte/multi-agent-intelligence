@@ -178,7 +178,7 @@ export const AgentConsensusConvergence: React.FC<AgentConsensusConvergenceProps>
                   className="rounded-3xl p-8 glass-panel-elevated space-y-4"
                 >
                   <div className="flex items-center justify-between pb-3 border-b border-[rgba(180,210,255,0.20)] font-mono text-xs gap-2">
-                    <span className="font-bold text-[#7DB8FF] truncate">{activeAgent.name} // Evidence</span>
+                    <span className="font-bold text-[#7DB8FF] truncate">{`${activeAgent.name} // Evidence`}</span>
                     <span className="text-white font-bold shrink-0">{activeAgent.evidence}</span>
                   </div>
 

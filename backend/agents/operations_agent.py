@@ -256,7 +256,7 @@ class OperationsAnalysisAgent:
                 )
 
                 # Cross-reference with Commercial high demand regions
-                commercial_top_reg = list(shared_context.get("commercial", {}).get("analysis", {}).get("regional_performance", {}).keys())
+                commercial_top_reg = list(((shared_context.get("commercial") or {}).get("analysis") or {}).get("regional_performance", {}).keys())
                 if commercial_top_reg and worst_reg == commercial_top_reg[0]:
                     insights.append(
                         f"Cross-Agent Critical Signal: Region '{worst_reg}' generates the highest commercial sales volume but simultaneously suffers from the longest delivery delays, signaling acute fulfillment bottleneck risk."

@@ -217,7 +217,7 @@ class FinancialAnalysisAgent:
                     )
 
                     # AGENT COLLABORATION: Cross-reference with Commercial Findings
-                    commercial_regions = shared_context.get("commercial", {}).get("analysis", {}).get("regional_performance", {})
+                    commercial_regions = ((shared_context.get("commercial") or {}).get("analysis") or {}).get("regional_performance", {})
                     if commercial_regions:
                         top_sales_reg = list(commercial_regions.keys())[0] if commercial_regions else None
                         if top_sales_reg and top_sales_reg != top_reg:

@@ -93,7 +93,7 @@ class RiskAnalysisAgent:
         # ----------------------------------------------------
         # 2. COMMERCIAL & DEMAND RISK (COMMERCIAL AGENT CONTEXT)
         # ----------------------------------------------------
-        comm_context = shared_context.get("commercial", {}).get("analysis", {})
+        comm_context = (shared_context.get("commercial") or {}).get("analysis") or {}
         commercial_risk_score = 15.0  # baseline
 
         # Check market volatility in dataset
@@ -135,7 +135,7 @@ class RiskAnalysisAgent:
         # ----------------------------------------------------
         # 3. FINANCIAL & PROFITABILITY RISK (FINANCIAL AGENT CONTEXT)
         # ----------------------------------------------------
-        fin_context = shared_context.get("financial", {}).get("analysis", {})
+        fin_context = (shared_context.get("financial") or {}).get("analysis") or {}
         financial_risk_score = 10.0
 
         margin_pct = fin_context.get("profitability", {}).get("profit_margin")
@@ -168,7 +168,7 @@ class RiskAnalysisAgent:
         # ----------------------------------------------------
         # 4. OPERATIONAL & SUPPLY CHAIN RISK (OPERATIONS AGENT CONTEXT)
         # ----------------------------------------------------
-        ops_context = shared_context.get("operations", {}).get("analysis", {})
+        ops_context = (shared_context.get("operations") or {}).get("analysis") or {}
         operational_risk_score = 10.0
 
         bottlenecks = ops_context.get("bottlenecks_and_constraints", {})

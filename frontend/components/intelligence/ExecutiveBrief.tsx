@@ -51,7 +51,7 @@ export const ExecutiveBrief: React.FC<ExecutiveBriefProps> = ({
             Core Strategic Synthesis
           </span>
           <blockquote className="editorial-quote mt-4 text-xl sm:text-2xl md:text-3xl text-[var(--text-primary)] leading-relaxed">
-            "{synthesis.executive_summary}"
+            &ldquo;{synthesis.executive_summary}&rdquo;
           </blockquote>
         </div>
 

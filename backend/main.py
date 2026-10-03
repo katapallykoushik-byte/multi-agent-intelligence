@@ -33,12 +33,31 @@ app = FastAPI(
 # CORS CONFIGURATION
 # ==========================================================
 
+env_origins = os.getenv("ALLOWED_ORIGINS", "")
+allowed_origins = [o.strip() for o in env_origins.split(",") if o.strip()]
+
+default_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://multi-agent-intelligence-rrr-8ee7.vercel.app",
+    "https://multi-agent-intelligence.vercel.app",
+    "https://frontend-olive-xi-60.vercel.app",
+]
+
+for origin in default_origins:
+    if origin not in allowed_origins:
+        allowed_origins.append(origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
@@ -117,10 +136,10 @@ def run_analysis_pipeline(file_path: str, business_problem: str):
     # --------------------------------------------------
     shared_context = {
         "data_intelligence": report,
-        "commercial": None,
-        "financial": None,
-        "operations": None,
-        "risk": None
+        "commercial": {},
+        "financial": {},
+        "operations": {},
+        "risk": {}
     }
 
     specialist_results = {}
@@ -250,3 +269,9 @@ async def analyze_dataset(
                 os.remove(file_path)
             except Exception:
                 pass
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=False)

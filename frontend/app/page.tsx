@@ -22,7 +22,6 @@ export default function Home() {
   // DISCRETE TERRITORY STATE LISTENER (ONLY UPDATES ON SECTION BOUNDARY CROSSINGS)
   useEffect(() => {
     if (!analysisResult) {
-      setActiveTerritory(0);
       return;
     }
 
@@ -69,6 +68,7 @@ export default function Home() {
     setError("");
     setSelectedFile(file);
     setAnalysisResult(null); // Clear previous analysis immediately on new file select
+    setActiveTerritory(0);
 
     // Dynamically extract column count from CSV header
     if (file.name.toLowerCase().endsWith(".csv")) {
@@ -111,16 +111,59 @@ export default function Home() {
       formData.append("file", selectedFile);
       formData.append("business_problem", businessProblem);
 
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        body: formData,
-      });
+      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+      const apiUrl = (rawApiUrl || "http://127.0.0.1:8000").replace(/\/+$/, "");
+      const targetUrl = `${apiUrl}/analyze`;
 
-      if (!response.ok) {
-        throw new Error("The analysis server returned an error.");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+      let response: Response;
+      try {
+        response = await fetch(targetUrl, {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+        });
+      } catch (networkErr: unknown) {
+        if (networkErr instanceof Error && networkErr.name === "AbortError") {
+          throw new Error("Analysis request timed out after 120 seconds. Please try again.");
+        }
+        throw new Error(
+          `Unable to reach the analysis server at ${targetUrl}. Please ensure the backend service is running and accessible.`
+        );
+      } finally {
+        clearTimeout(timeoutId);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        let errMessage = `The analysis server returned an error (HTTP ${response.status}).`;
+        try {
+          const errData = await response.json();
+          if (errData && errData.message) {
+            errMessage = errData.message;
+          }
+        } catch {
+          try {
+            const errText = await response.text();
+            if (errText) errMessage = `${errMessage} Details: ${errText.slice(0, 150)}`;
+          } catch {
+            // fallback
+          }
+        }
+        throw new Error(errMessage);
+      }
+
+      let data: AnalysisResult;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error("The analysis server returned an invalid or malformed response.");
+      }
+
+      if (!data || typeof data !== "object") {
+        throw new Error("Received an empty or invalid result from the analysis server.");
+      }
 
       if (data.status === "error") {
         throw new Error(data.message || "Analysis failed.");
@@ -153,6 +196,7 @@ export default function Home() {
     setSelectedFile(null);
     setBusinessProblem("");
     setError("");
+    setActiveTerritory(0);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

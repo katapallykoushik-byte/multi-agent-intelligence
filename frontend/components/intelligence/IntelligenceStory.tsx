@@ -781,7 +781,7 @@ export const IntelligenceStory: React.FC<IntelligenceStoryProps> = ({
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xs font-bold text-[#7DB8FF]">
-                          Action {rec.id} // {rec.domain}
+                          {`Action ${rec.id} // ${rec.domain}`}
                         </span>
                         <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded bg-[rgba(16,185,129,0.20)] text-[#10B981] border border-[rgba(16,185,129,0.30)]">
                           {rec.priority}

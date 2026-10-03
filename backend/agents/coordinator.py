@@ -208,11 +208,11 @@ class CoordinatorAgent:
         Apex intelligence layer: Synthesizes cross-agent findings into a dynamic,
         evidence-grounded Executive Decision Brief tailored to the strategic objective.
         """
-        data_intel = shared_context.get("data_intelligence", {})
-        comm = shared_context.get("commercial", {}).get("analysis", {})
-        fin = shared_context.get("financial", {}).get("analysis", {})
-        ops = shared_context.get("operations", {}).get("analysis", {})
-        risk = shared_context.get("risk", {}).get("analysis", {})
+        data_intel = shared_context.get("data_intelligence", {}) or {}
+        comm = (shared_context.get("commercial") or {}).get("analysis") or {}
+        fin = (shared_context.get("financial") or {}).get("analysis") or {}
+        ops = (shared_context.get("operations") or {}).get("analysis") or {}
+        risk = (shared_context.get("risk") or {}).get("analysis") or {}
 
         problem_lower = business_problem.lower().strip()
 
@@ -396,17 +396,41 @@ class CoordinatorAgent:
         # Sort candidates by relevance to the strategic problem
         candidates.sort(key=lambda x: x["score"], reverse=True)
 
+        if not what_we_found:
+            what_we_found.append({
+                "label": "Data Assessment",
+                "finding": "Baseline data ingestion completed. Specialist metrics are awaiting broader feature attribution."
+            })
+
+        if not candidates:
+            candidates.append({
+                "id": "01",
+                "domain": "Enterprise Data Governance",
+                "tag": "Data Completeness",
+                "title": "Establish Foundational Enterprise Metrics",
+                "finding": "The current dataset contains insufficient populated operational, financial, or commercial columns for automated predictive models.",
+                "evidence": f"Data quality score: {data_intel.get('data_quality', {}).get('quality_score', 0)}/100",
+                "implication": "Decision risk cannot be quantitatively bounded without baseline domain metrics.",
+                "action": "Ingest standard transaction logs with revenue, cost, order volume, and fulfillment timestamps.",
+                "priority": "High",
+                "score": 10
+            })
+
         # Re-index IDs
         structured_recommendations = []
         for idx, item in enumerate(candidates[:4]):
             item["id"] = f"0{idx + 1}"
             structured_recommendations.append(item)
 
+        rec_target = structured_recommendations[0]["title"].lower() if structured_recommendations else "data enrichment"
+        margin_disp = margin_pct if margin_pct is not None else 0.0
+        sales_disp = tot_sales if tot_sales is not None else 0.0
+
         # Executive summary
         exec_summary = (
             f"Collaborative multi-agent analysis addressing '{business_problem.strip()}' indicates "
-            f"an enterprise operating at {margin_pct:.1f}% net margin with ${tot_sales:,.0f} in commercial volume. "
-            f"Strategic priority should be directed toward {structured_recommendations[0]['title'].lower()} "
+            f"an enterprise operating at {margin_disp:.1f}% net margin with ${sales_disp:,.0f} in commercial volume. "
+            f"Strategic priority should be directed toward {rec_target} "
             f"to protect profitability and support sustainable growth."
         )
 
@@ -427,6 +451,7 @@ class CoordinatorAgent:
                 "overall_confidence": conf_level,
                 "data_reliability_score": quality_score,
                 "model_validity": "Validated through cross-agent empirical and machine learning checks",
+                "human_in_the_loop_advisory": "This analysis provides advisory decision support. Strategic organizational changes, personnel actions, or commercial contractual modifications require human executive review.",
                 "limitations": fin.get("limitations", []) + ops.get("limitations", [])
             }
         }

@@ -1,5 +1,6 @@
 export type AnalysisResult = {
   status: string;
+  message?: string;
   business_problem: string;
 
   analysis: {
@@ -42,8 +43,8 @@ export type AnalysisResult = {
     };
 
     preprocessing_recommendations?: string[];
-    detected_concepts?: Record<string, any>;
-    predictive_readiness?: Record<string, any>;
+    detected_concepts?: Record<string, unknown>;
+    predictive_readiness?: Record<string, unknown>;
   };
 
   coordinator: {
@@ -129,9 +130,9 @@ export type AnalysisResult = {
             maximum_profit: number;
           };
         };
-        revenue_analysis?: Record<string, any>;
-        cost_analysis?: Record<string, any>;
-        profit_analysis?: Record<string, any>;
+        revenue_analysis?: Record<string, unknown>;
+        cost_analysis?: Record<string, unknown>;
+        profit_analysis?: Record<string, unknown>;
         key_metrics?: {
           profit_margin_pct?: number;
           cost_to_revenue_ratio_pct?: number;
@@ -341,6 +342,6 @@ export type MarqueeCardData = {
   badge?: string;
   badgeType?: "accent" | "warning" | "neutral" | "success";
   chartType?: "sparkline" | "bar" | "matrix" | "features" | "meter";
-  chartData?: any;
+  chartData?: unknown;
   targetSectionId: string;
 };

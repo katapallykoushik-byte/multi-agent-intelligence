@@ -48,19 +48,18 @@ export const AnalysisTransitionSequence: React.FC<AnalysisTransitionSequenceProp
 
   useEffect(() => {
     if (!isAnalyzing && !analysisResult) {
-      setStep(0);
-      setCommercialState("STANDBY");
-      setFinancialState("STANDBY");
-      setOperationsState("STANDBY");
-      setRiskState("STANDBY");
-      return;
+      const resetTimer = setTimeout(() => {
+        setStep(0);
+        setCommercialState("STANDBY");
+        setFinancialState("STANDBY");
+        setOperationsState("STANDBY");
+        setRiskState("STANDBY");
+      }, 0);
+      return () => clearTimeout(resetTimer);
     }
 
     // SEQUENCE TIMERS FOR NATURAL CINEMATIC PACING
     const timers: NodeJS.Timeout[] = [];
-
-    // Step 0: DATASET VERIFIED (immediately)
-    setStep(0);
 
     // Step 1: VARIABLES MAPPED (at 600ms)
     timers.push(
@@ -113,17 +112,22 @@ export const AnalysisTransitionSequence: React.FC<AnalysisTransitionSequenceProp
   // WHEN REAL BACKEND RESULTS ARRIVE: MARK ALL COMPLETE & TRANSITION
   useEffect(() => {
     if (analysisResult && step >= 2) {
-      setCommercialState("COMPLETE");
-      setFinancialState("COMPLETE");
-      setOperationsState("COMPLETE");
-      setRiskState("COMPLETE");
-      setStep(6);
+      const completeStateTimer = setTimeout(() => {
+        setCommercialState("COMPLETE");
+        setFinancialState("COMPLETE");
+        setOperationsState("COMPLETE");
+        setRiskState("COMPLETE");
+        setStep(6);
+      }, 0);
 
       const completeTimer = setTimeout(() => {
         onSequenceComplete?.();
       }, 1200);
 
-      return () => clearTimeout(completeTimer);
+      return () => {
+        clearTimeout(completeStateTimer);
+        clearTimeout(completeTimer);
+      };
     }
   }, [analysisResult, step, onSequenceComplete]);
 
