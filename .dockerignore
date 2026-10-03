@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.venv
+venv
+frontend
+multi_agent_ai
+card
+two cards
+Scroll
+uploads
+.vercel
